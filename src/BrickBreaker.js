@@ -26,6 +26,7 @@ var game = new Phaser.Game(config);
 var ball;
 var player;
 var bricks = [];
+var livesText;
 
 var isPaddleMovingLeft = false;
 var isPaddleMovingRight = false;
@@ -46,11 +47,11 @@ function preload()
 
 function create() 
 {
-    player = this.physics.add.sprite((game.config.width / 2), (game.config.height - 20), 'paddle');
+    player = this.physics.add.sprite((game.config.width / 2), (game.config.height - 35), 'paddle');
     player.body.collideWorldBounds = true;
     player.body.immovable = true;
 
-    ball = this.physics.add.sprite(((game.config.width / 2)), (game.config.height - 44), 'ball');
+    ball = this.physics.add.sprite(((game.config.width / 2)), (game.config.height - 59), 'ball');
     ball.body.immovable = true;
     ball.setVelocity(ballSpeed, -ballSpeed);
 
@@ -62,6 +63,8 @@ function create()
             bricks[bricks.length - 1].body.immovable = true;
         }
     }
+
+    livesText = this.add.text(5, config.height - 20, 'Lives: ' + lives);
 }
 
 function update() 
@@ -182,6 +185,29 @@ var CheckWorldBounds = function()
 
     if(ball.body.y >= game.config.height - ball.body.height)
     {
-        alert("Game Over");
+        if(lives > 0)
+        {
+            UpdateLives(-1);
+            ResetBall();
+        }
+
+        else
+        {
+            alert("Game Over");
+        }
     }
+};
+
+var UpdateLives = function(mod)
+{
+    lives += mod;
+    livesText.text = 'Lives: ' + lives;
 }
+
+var ResetBall = function()
+{
+    player.x = (game.config.width / 2);
+    ball.x = (game.config.width / 2);
+    ball.y = (game.config.height - 59);
+    ball.setVelocity(ballSpeed, -ballSpeed);
+};
