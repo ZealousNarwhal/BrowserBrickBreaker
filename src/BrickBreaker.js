@@ -32,6 +32,7 @@ var isPaddleMovingRight = false;
 
 var lives = 3;
 var ballSpeed = 100;
+var ballXMod = 1.0;
 
 //#endregion
 
@@ -112,7 +113,10 @@ function  ballCollision(ball, obj)
 {
     if(obj == player)
     {
+        ball.body.y = player.body.y - ball.body.height;
+        ballXMod = Math.random() + 0.5;
         ball.setVelocityY(-ballSpeed);
+        ball.setVelocityX(ball.body.velocity.x * ballXMod)
     }
 
     if(bricks.includes(obj))
@@ -129,12 +133,12 @@ function  ballCollision(ball, obj)
 
         if(obj.body.touching.left)
         {
-            ball.setVelocityX(-ballSpeed);
+            ball.setVelocityX(-ballSpeed * ballXMod);
         }
 
         else if(obj.body.touching.right)
         {
-            ball.setVelocityX(ballSpeed);
+            ball.setVelocityX(ballSpeed * ballXMod);
         }
 
         obj.destroy();
@@ -163,12 +167,12 @@ var CheckWorldBounds = function()
 {
     if(ball.body.x >= game.config.width - ball.body.width)
     {
-        ball.setVelocityX(-ballSpeed);
+        ball.setVelocityX(-ballSpeed * ballXMod);
     }
 
     else if(ball.body.x <= 0)
     {
-        ball.setVelocityX(ballSpeed);
+        ball.setVelocityX(ballSpeed * ballXMod);
     }
 
     if(ball.body.y <= 0)
