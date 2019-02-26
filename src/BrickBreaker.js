@@ -4,6 +4,7 @@ var config =
     type: Phaser.AUTO,
     width: 600,
     height: 600,
+    backgroundColor: '#6495ED',
 
     physics:
     {
@@ -27,6 +28,8 @@ var ball;
 var player;
 var bricks = [];
 var livesText;
+var announcementText;
+var announcementSubText;
 
 var isPaddleMovingLeft = false;
 var isPaddleMovingRight = false;
@@ -34,6 +37,7 @@ var isPaddleMovingRight = false;
 var lives = 3;
 var ballSpeed = 100;
 var ballXMod = 1.0;
+var isGameActive = true;
 
 //#endregion
 
@@ -65,28 +69,51 @@ function create()
     }
 
     livesText = this.add.text(5, config.height - 20, 'Lives: ' + lives);
+
+    announcementText = this.add.text((config.width / 2), (config.height / 2), " ", //space is nessesary for subtext height
+    { 
+        font: '64px', 
+        fill: '#ffffff', 
+    });
+
+    announcementSubText = this.add.text((config.width / 2), (config.height / 2) + announcementText.height, " ",
+    { 
+        font: '24px', 
+        fill: '#ffffff', 
+    });
 }
 
 function update() 
 {
-    this.physics.add.collider(ball, player, ballCollision, processCallback, this);
-    this.physics.add.collider(ball, bricks, ballCollision, processCallback, this);
-    CheckWorldBounds();
+    if(isGameActive)
+    {
+        this.physics.add.collider(ball, player, ballCollision, processCallback, this);
+        this.physics.add.collider(ball, bricks, ballCollision, processCallback, this);
+        CheckWorldBounds();
+    }
 }
 
 function keyDownHandler(e)
 {
-    if(e.key == 'a')
+    if(e.key == 'r')
     {
-        isPaddleMovingLeft = true;
+        ResetGame();
     }
 
-    if(e.key == 'd')
+    if(isGameActive)
     {
-        isPaddleMovingRight = true;
-    }
+        if(e.key == 'a')
+        {
+            isPaddleMovingLeft = true;
+        }
 
-    UpdatePlayer();
+        if(e.key == 'd')
+        {
+            isPaddleMovingRight = true;
+        }
+
+        UpdatePlayer();
+    }
 };
 
 function keyUpHandler(e)
@@ -144,7 +171,9 @@ function  ballCollision(ball, obj)
             ball.setVelocityX(ballSpeed * ballXMod);
         }
 
-        obj.destroy();
+        obj.exists = false;
+        obj.visible = false;
+        obj.body.enable = false;
     }
 }
 //#endregion
@@ -193,7 +222,9 @@ var CheckWorldBounds = function()
 
         else
         {
-            alert("Game Over");
+            ball.body.setVelocity(0, 0);
+            isGameActive = false;
+            DisplayAnnouncement('Game Over', 'press "r" to reset.')
         }
     }
 };
@@ -210,4 +241,32 @@ var ResetBall = function()
     ball.x = (game.config.width / 2);
     ball.y = (game.config.height - 59);
     ball.setVelocity(ballSpeed, -ballSpeed);
+};
+
+var ResetGame = function()
+{
+    ResetBall()
+    DisplayAnnouncement(' ', ' ');
+    isGameActive = true;
+    UpdateLives(3 - lives);
+    RestoreLevel();
+}
+
+var DisplayAnnouncement = function(mainText, subText)
+{
+    announcementText.text = mainText;
+    announcementSubText.text = subText;
+
+    announcementText.x -= (announcementText.width / 2);
+    announcementSubText.x -= (announcementSubText.width / 2);
+};
+
+var RestoreLevel = function()
+{
+    for(var i = 0; i < bricks.length; i++)
+    {
+        bricks[i].exists = true;
+        bricks[i].visible = true;
+        bricks[i].body.enable = true;
+    }
 };
