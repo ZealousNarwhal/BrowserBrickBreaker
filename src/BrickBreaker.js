@@ -38,6 +38,7 @@ var lives = 3;
 var ballSpeed = 100;
 var ballXMod = 1.0;
 var isGameActive = true;
+var numberOfActiveBricks;
 
 //#endregion
 
@@ -67,6 +68,7 @@ function create()
             bricks[bricks.length - 1].body.immovable = true;
         }
     }
+    numberOfActiveBricks = bricks.length;
 
     livesText = this.add.text(5, config.height - 20, 'Lives: ' + lives);
 
@@ -174,6 +176,14 @@ function  ballCollision(ball, obj)
         obj.exists = false;
         obj.visible = false;
         obj.body.enable = false;
+        numberOfActiveBricks--;
+
+        if(numberOfActiveBricks == 0)
+        {
+            ball.body.setVelocity(0, 0);
+            isGameActive = false;
+            DisplayAnnouncement('You Win!', 'press "r" to restart.');
+        }
     }
 }
 //#endregion
@@ -224,7 +234,7 @@ var CheckWorldBounds = function()
         {
             ball.body.setVelocity(0, 0);
             isGameActive = false;
-            DisplayAnnouncement('Game Over', 'press "r" to reset.')
+            DisplayAnnouncement('Game Over', 'press "r" to restart.')
         }
     }
 };
@@ -250,6 +260,7 @@ var ResetGame = function()
     isGameActive = true;
     UpdateLives(3 - lives);
     RestoreLevel();
+    numberOfActiveBricks = bricks.length;
 }
 
 var DisplayAnnouncement = function(mainText, subText)
