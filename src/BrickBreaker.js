@@ -45,13 +45,13 @@ var numberOfActiveBricks;
 //#region Game Loop
 function preload() 
 {
-   this.load.image('ball', 'assets/ball.png');
-   this.load.image('paddle', 'assets/paddle.png')
-   this.load.image('brick1', 'assets/brick1.png')
-   this.load.image('brick2', 'assets/brick2.png')
-   this.load.image('brick3', 'assets/brick3.png')
-   this.load.image('brick4', 'assets/brick4.png')
-   this.load.image('brick5', 'assets/brick5.png')
+    this.load.image('ball', 'assets/ball.png');
+    this.load.image('paddle', 'assets/paddle.png')
+
+    for(var i = 0; i < levels.levelOne.bricksToLoad.length; i++)
+    {
+        this.load.image(levels.levelOne.bricksToLoad[i], 'assets/' + levels.levelOne.bricksToLoad[i] + '.png')
+    }
 }
 
 function create() 
