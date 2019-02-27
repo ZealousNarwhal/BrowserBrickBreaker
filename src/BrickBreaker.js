@@ -48,6 +48,10 @@ function preload()
    this.load.image('ball', 'assets/ball.png');
    this.load.image('paddle', 'assets/paddle.png')
    this.load.image('brick1', 'assets/brick1.png')
+   this.load.image('brick2', 'assets/brick2.png')
+   this.load.image('brick3', 'assets/brick3.png')
+   this.load.image('brick4', 'assets/brick4.png')
+   this.load.image('brick5', 'assets/brick5.png')
 }
 
 function create() 
@@ -60,14 +64,50 @@ function create()
     ball.body.immovable = true;
     ball.setVelocity(ballSpeed, -ballSpeed);
 
-    for(var x = 0; x < 8; x++)
+    for(var i = 0; i < levels.levelOne.bricks.length; i++)
     {
-        for(var y = 0; y < 3; y++)
+        var x = i % 8;
+        var y = Math.floor(i / 8);
+
+        switch(levels.levelOne.bricks[i])
         {
-            bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x  + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick1'));
-            bricks[bricks.length - 1].body.immovable = true;
+            case 0:
+                break;
+            case 1:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick1'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 1;
+                bricks[bricks.length - 1].health = 1;
+                break;
+            case 2:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick2'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 2;
+                bricks[bricks.length - 1].health = 2;
+                break;
+            case 3:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick3'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 3;
+                bricks[bricks.length - 1].health = 3;
+                break;
+            case 4:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick4'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 4;
+                bricks[bricks.length - 1].health = 4;
+                break;
+            case 5:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick5'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 5;
+                bricks[bricks.length - 1].health = 5;
+                break;
+            default: 
+                break;
         }
     }
+
     numberOfActiveBricks = bricks.length;
 
     livesText = this.add.text(5, config.height - 20, 'Lives: ' + lives);
@@ -156,27 +196,62 @@ function  ballCollision(ball, obj)
         if(obj.body.touching.up)
         {
             ball.setVelocityY(-ballSpeed);
+            ball.body.y = obj.body.y - obj.body.height;
         }
 
         else if(obj.body.touching.down)
         {
             ball.setVelocityY(ballSpeed);
+            ball.body.y = obj.body.y + ball.body.height;
         }
 
         if(obj.body.touching.left)
         {
             ball.setVelocityX(-ballSpeed * ballXMod);
+            ball.body.x = obj.body.x - ball.body.width;
         }
 
         else if(obj.body.touching.right)
         {
             ball.setVelocityX(ballSpeed * ballXMod);
+            ball.body.x = obj.body.x + obj.body.width;
         }
 
-        obj.exists = false;
-        obj.visible = false;
-        obj.body.enable = false;
-        numberOfActiveBricks--;
+        obj.health--;
+
+        switch(obj.health)
+        {
+            case 0:
+            {
+                obj.exists = false;
+                obj.visible = false;
+                obj.body.enable = false;
+                numberOfActiveBricks--;
+                break;
+            }
+            case 1:
+            {
+                obj.setTexture('brick1');
+                break;
+            }
+            case 2:
+            {
+                obj.setTexture('brick2');
+                break;
+            }
+            case 3:
+            {
+                obj.setTexture('brick3');
+                break;
+            }
+            case 4:
+            {
+                obj.setTexture('brick4');
+                break;
+            }
+            default:
+                break;
+        }
 
         if(numberOfActiveBricks == 0)
         {
@@ -279,5 +354,7 @@ var RestoreLevel = function()
         bricks[i].exists = true;
         bricks[i].visible = true;
         bricks[i].body.enable = true;
+        bricks[i].health = bricks[i].maxHealth;
+        bricks[i].setTexture('brick' + bricks[i].maxHealth); //probably bad :(
     }
 };
