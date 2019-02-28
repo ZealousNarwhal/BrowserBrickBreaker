@@ -12,7 +12,7 @@ var config =
         arcade:{}
     },
 
-    scene: 
+    scene:
     {
         preload: preload,
         create: create,
@@ -64,54 +64,6 @@ function create()
     ball.body.immovable = true;
     ball.setVelocity(ballSpeed, -ballSpeed);
 
-    for(var i = 0; i < levels.levelOne.bricks.length; i++)
-    {
-        var x = i % 8;
-        var y = Math.floor(i / 8);
-
-        switch(levels.levelOne.bricks[i])
-        {
-            case 0:
-                break;
-            case 1:
-                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick1'));
-                bricks[bricks.length - 1].body.immovable = true
-                bricks[bricks.length - 1].maxHealth = 1;
-                bricks[bricks.length - 1].health = 1;
-                break;
-            case 2:
-                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick2'));
-                bricks[bricks.length - 1].body.immovable = true
-                bricks[bricks.length - 1].maxHealth = 2;
-                bricks[bricks.length - 1].health = 2;
-                break;
-            case 3:
-                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick3'));
-                bricks[bricks.length - 1].body.immovable = true
-                bricks[bricks.length - 1].maxHealth = 3;
-                bricks[bricks.length - 1].health = 3;
-                break;
-            case 4:
-                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick4'));
-                bricks[bricks.length - 1].body.immovable = true
-                bricks[bricks.length - 1].maxHealth = 4;
-                bricks[bricks.length - 1].health = 4;
-                break;
-            case 5:
-                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick5'));
-                bricks[bricks.length - 1].body.immovable = true
-                bricks[bricks.length - 1].maxHealth = 5;
-                bricks[bricks.length - 1].health = 5;
-                break;
-            default: 
-                break;
-        }
-    }
-
-    numberOfActiveBricks = bricks.length;
-
-    livesText = this.add.text(5, config.height - 20, 'Lives: ' + lives);
-
     announcementText = this.add.text((config.width / 2), (config.height / 2), " ", //space is nessesary for subtext height
     { 
         font: '64px', 
@@ -123,6 +75,10 @@ function create()
         font: '24px', 
         fill: '#ffffff', 
     });
+
+    loadLevel.call(this);
+
+    livesText = this.add.text(5, config.height - 20, 'Lives: ' + lives);
 }
 
 function update() 
@@ -358,3 +314,62 @@ var RestoreLevel = function()
         bricks[i].setTexture('brick' + bricks[i].maxHealth); //probably bad :(
     }
 };
+
+var clearLevel = function()
+{
+    for(var i = 0; i < bricks.length; i++)
+    {
+        bricks[i].destroy();
+    }
+
+    bricks = [];
+}
+
+var loadLevel = function()
+{
+    for(var i = 0; i < levels.levelOne.bricks.length; i++)
+    {
+        var x = i % 8;
+        var y = Math.floor(i / 8);
+
+        switch(levels.levelOne.bricks[i])
+        {
+            case 0:
+                break;
+            case 1:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick1'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 1;
+                bricks[bricks.length - 1].health = 1;
+                break;
+            case 2:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick2'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 2;
+                bricks[bricks.length - 1].health = 2;
+                break;
+            case 3:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick3'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 3;
+                bricks[bricks.length - 1].health = 3;
+                break;
+            case 4:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick4'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 4;
+                bricks[bricks.length - 1].health = 4;
+                break;
+            case 5:
+                bricks.push(this.physics.add.sprite(32 + (64 * x) + (10 * (x + 1)), 16 + (32 * y) + (10 * (y + 1)), 'brick5'));
+                bricks[bricks.length - 1].body.immovable = true
+                bricks[bricks.length - 1].maxHealth = 5;
+                bricks[bricks.length - 1].health = 5;
+                break;
+            default: 
+                break;
+        }
+    }
+
+    numberOfActiveBricks = bricks.length;
+}
